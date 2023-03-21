@@ -6,8 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Server extends Thread {
 
@@ -32,24 +32,68 @@ public class Server extends Thread {
 	
 	public Server (Socket connection) {
 		this.connection = connection;
+	}
+	
+	/* COMPLETE */
+
+	public void run() {
+		words = new TreeMap<String, Integer>();
 		try {
 			this.inputChannel = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         	this.outputChannel = new PrintWriter(connection.getOutputStream(), true);
 			innerRun();
 		} catch(IOException ioex){}
 	}
-	
-	/* COMPLETE */
 
 	private void innerRun() throws IOException {
-		for(String line = receiveRequest(); line != null; line = receiveRequest()) {
-			//separar linea por palabras
+		// for(String line = receiveRequest(); line != null; line = receiveRequest()) {
+		// 	//separar linea por palabras
+		// 	line = line.toUpperCase();
+		// 	String [] lineWords = line.split("[\\s!?\"\',;:.-]+");
+		// 	for(int i = 0; i < lineWords.length; i++) {
+		// 		if(lineWords[i].length() >= 9){
+		// 			// add to map if not already in it and +1 to number of times it appears
+		// 			if(words.containsKey(lineWords[i])){
+		// 				words.put(lineWords[i], words.get(lineWords[i]) + 1);
+		// 			}
+		// 			else{
+		// 				words.put(lineWords[i], 1);
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// System.out.println("bucle?");
+		// sendReply(words);
+		String line =receiveRequest();
+		while(true){
+			if (line == null){
+				sendReply(words);
+				break;
+			}
+			line = line.toUpperCase();
+			String [] lineWords = line.split("[\\s!?\"\',;:.-]+");
+			for(int i = 0; i < lineWords.length; i++) {
+				if(lineWords[i].length() >= 9){
+					// add to map if not already in it and +1 to number of times it appears
+					if(words.containsKey(lineWords[i])){
+						words.put(lineWords[i], words.get(lineWords[i]) + 1);
+					}
+					else{
+						words.put(lineWords[i], 1);
+					}
+				}
+			}
+			line = receiveRequest();
 		}
 	}
 
 	private String receiveRequest () throws IOException {
         return this.inputChannel.readLine();
     }
+
+	private void sendReply (Map<String, Integer> words) throws IOException {
+		this.outputChannel.println("HOLA");
+	}
 	
 }
 
