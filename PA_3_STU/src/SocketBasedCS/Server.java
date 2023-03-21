@@ -42,7 +42,9 @@ public class Server extends Thread {
 	/* COMPLETE */
 
 	private void innerRun() throws IOException {
-		System.out.println(receiveRequest());
+		for(String line = receiveRequest(); line != null; line = receiveRequest()) {
+			//separar linea por palabras
+		}
 	}
 
 	private String receiveRequest () throws IOException {
