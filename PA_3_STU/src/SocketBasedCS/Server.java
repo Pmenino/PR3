@@ -32,9 +32,22 @@ public class Server extends Thread {
 	
 	public Server (Socket connection) {
 		this.connection = connection;
+		try {
+			this.inputChannel = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        	this.outputChannel = new PrintWriter(connection.getOutputStream(), true);
+			innerRun();
+		} catch(IOException ioex){}
 	}
 	
 	/* COMPLETE */
+
+	private void innerRun() throws IOException {
+		System.out.println(receiveRequest());
+	}
+
+	private String receiveRequest () throws IOException {
+        return this.inputChannel.readLine();
+    }
 	
 }
 
