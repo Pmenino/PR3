@@ -46,45 +46,22 @@ public class Server extends Thread {
 	}
 
 	private void innerRun() throws IOException {
-		// for(String line = receiveRequest(); line != null; line = receiveRequest()) {
-		// 	//separar linea por palabras
-		// 	line = line.toUpperCase();
-		// 	String [] lineWords = line.split("[\\s!?\"\',;:.-]+");
-		// 	for(int i = 0; i < lineWords.length; i++) {
-		// 		if(lineWords[i].length() >= 9){
-		// 			// add to map if not already in it and +1 to number of times it appears
-		// 			if(words.containsKey(lineWords[i])){
-		// 				words.put(lineWords[i], words.get(lineWords[i]) + 1);
-		// 			}
-		// 			else{
-		// 				words.put(lineWords[i], 1);
-		// 			}
-		// 		}
-		// 	}
-		// }
-		// System.out.println("bucle?");
-		// sendReply(words);
-		String line =receiveRequest();
-		while(true){
-			if (line == null){
-				sendReply(words);
-				break;
-			}
+		for(String line = receiveRequest(); !line.equals("\u001a"); line = receiveRequest()) {
 			line = line.toUpperCase();
-			String [] lineWords = line.split("[\\s!?\"\',;:.-]+");
-			for(int i = 0; i < lineWords.length; i++) {
-				if(lineWords[i].length() >= 9){
-					// add to map if not already in it and +1 to number of times it appears
-					if(words.containsKey(lineWords[i])){
-						words.put(lineWords[i], words.get(lineWords[i]) + 1);
-					}
-					else{
-						words.put(lineWords[i], 1);
-					}
+		 	String [] lineWords = line.split("[\\s!?\"\',;:.-]+");
+		 	for(int i = 0; i < lineWords.length; i++) {
+		 		if(lineWords[i].length() >= 9){
+		 			if(words.containsKey(lineWords[i])){
+		 				words.put(lineWords[i], words.get(lineWords[i]) + 1);
+		 			}
+		 			else{
+		 				words.put(lineWords[i], 1);
+		 			}
 				}
 			}
-			line = receiveRequest();
+
 		}
+		sendReply(words);
 	}
 
 	private String receiveRequest () throws IOException {
@@ -92,7 +69,9 @@ public class Server extends Thread {
     }
 
 	private void sendReply (Map<String, Integer> words) throws IOException {
-		this.outputChannel.println("HOLA");
+		for (String s: words.keySet()) {
+			this.outputChannel.println(s + " " + words.get(s));
+		}
 	}
 	
 }
