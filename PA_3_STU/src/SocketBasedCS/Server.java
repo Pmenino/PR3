@@ -71,6 +71,7 @@ public class Server extends Thread {
 		for (String s: words.keySet()) {
 			this.outputChannel.println(s + " " + words.get(s));
 		}
+		this.outputChannel.println("SERVICE_TERMINATED");
 	}
 	
 }
