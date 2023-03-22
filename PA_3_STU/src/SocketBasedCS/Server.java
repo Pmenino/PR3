@@ -59,7 +59,6 @@ public class Server extends Thread {
 		 			}
 				}
 			}
-
 		}
 		sendReply(words);
 	}
