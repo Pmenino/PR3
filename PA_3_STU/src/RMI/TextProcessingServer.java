@@ -17,7 +17,7 @@ public class TextProcessingServer extends UnicastRemoteObject implements TextPro
 	/* COMPLETE */
 	private int id;
 	private int nextId = 0;
-	private Map <String, Integer> words;
+	private TreeMap<String, Integer> words;
 	
 	protected TextProcessingServer() throws RemoteException {
 		super();
@@ -49,13 +49,18 @@ public class TextProcessingServer extends UnicastRemoteObject implements TextPro
 		 		}
 			}
 		}
-		System.out.println(words);
 	}
 
 	@Override
 	public String getOneResult(int id) throws RemoteException {
 		if(id < 0) throw new RemoteException("Invalid id: " + id);
-		return "SERVICE_TERMINATED";
+		if(words.size() > 0){
+			String firstEntry = words.firstKey().toString() + " " + words.get(words.firstKey()).toString();
+			words.remove(words.firstKey());
+			return firstEntry;
+		}else{
+			return "SERVICE_TERMINATED";
+		}
 	}
 	
 	
