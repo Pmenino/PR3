@@ -39,7 +39,7 @@ public class Client extends Thread {
 		TextProcessingService provider = (TextProcessingService) registry.lookup("TEXT");
 		
 		id = provider.establishConnection();  // comment this line and you should receive an exception stating that the id is unknown
-		
+
 		JFileChooser fc = new JFileChooser(".");
 		fc.showOpenDialog(null);
 		File file = fc.getSelectedFile();
