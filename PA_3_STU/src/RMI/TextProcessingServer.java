@@ -15,27 +15,35 @@ public class TextProcessingServer extends UnicastRemoteObject implements TextPro
 		System.out.println("Text proc service running at port 1999");
 	}
 	/* COMPLETE */
-	private int id;
 	private int nextId = 0;
-	private TreeMap<String, Integer> words;
+	private TreeMap<Integer, ClientState> clients;
 	
 	protected TextProcessingServer() throws RemoteException {
 		super();
-		this.id = 0;
-		words = new TreeMap<String, Integer>();
+		clients = new TreeMap<Integer, ClientState>();
+		this.nextId = 0;
+	}
+
+	class ClientState {
+		TreeMap<String, Integer> words;
 	}
 	
 
 	@Override
 	public int establishConnection() throws RemoteException {
 		int id = nextId;
+		ClientState clientState = new ClientState();
+		clientState.words = new TreeMap<String, Integer>();
+		clients.put(id, clientState);
 		nextId++;
 		return id;
 	}
 
 	@Override
 	public void digestLine(int id, String line) throws RemoteException {
-		if(id < 0) throw new RemoteException("Invalid id: " + id);
+		if(id < 0 || !clients.containsKey(id)) throw new RemoteException("Invalid id: " + id);
+
+		TreeMap<String, Integer> words = clients.get(id).words;
 
 		line = line.toUpperCase();
 		String [] lineWords = line.split("[\\s!?\"\',;:.-]+");
@@ -53,6 +61,8 @@ public class TextProcessingServer extends UnicastRemoteObject implements TextPro
 
 	@Override
 	public String getOneResult(int id) throws RemoteException {
+		TreeMap<String, Integer> words = clients.get(id).words;
+		
 		if(id < 0) throw new RemoteException("Invalid id: " + id);
 		if(words.size() > 0){
 			String firstEntry = words.firstKey().toString() + " " + words.get(words.firstKey()).toString();
